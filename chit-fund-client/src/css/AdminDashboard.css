@@ -1,0 +1,73 @@
+.admin-dashboard-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.create-schema-form {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.schemas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.schemas-table th,
+.schemas-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.schemas-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.schemas-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.submit-button, .cancel-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
