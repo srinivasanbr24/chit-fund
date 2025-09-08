@@ -30,7 +30,7 @@ public class SchemaService {
         schema1.setDescription(schema.getDescription());
         schema1.setName(schema.getSchemaName());
         schema1.setDurationInMonths(schema.getDurationInMonths());
-        schema1.setMonthlyContribution(schema.getAmount());
+        schema1.setMonthlyContribution(schema.getMonthlyContribution());
         schemaRepo.save(schema1);
         System.out.println(" schema is added");
         return schema;
@@ -63,7 +63,7 @@ public class SchemaService {
         schemaDTO.setId(schema.getId());
         schemaDTO.setSchemaName(schema.getName());
         schemaDTO.setDescription(schema.getDescription());
-        schemaDTO.setAmount(schema.getMonthlyContribution());
+        schemaDTO.setMonthlyContribution(schema.getMonthlyContribution());
         schemaDTO.setDurationInMonths(schema.getDurationInMonths());
         return schemaDTO;
     }

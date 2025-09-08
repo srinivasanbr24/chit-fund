@@ -24,6 +24,6 @@ public class SchemaDTO {
     private Integer durationInMonths;
 
     @JsonView(Views.Basic.class)
-    private Double amount;
+    private Double monthlyContribution;
 
 }
