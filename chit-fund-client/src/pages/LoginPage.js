@@ -21,7 +21,7 @@ const LoginPage = () => {
       if (decoded.role === "ADMIN") {
         navigate("/admin");
       } else {
-        navigate("/user");
+        navigate("/user",{ state: { mobile } } );
       }
     } catch (err) {
       console.error(err);
