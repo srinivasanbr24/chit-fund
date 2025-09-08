@@ -60,15 +60,6 @@ public class UserService {
         return ResponseEntity.ok(schemaDTOs);
     }
 
-    @Transactional
-    public String addUserName(String mobileNumber, String name){
-        validateMobileNumber(mobileNumber);
-        Optional<User> user = userRepository.findById(mobileNumber);
-        if(user.isEmpty()) throw  new RuntimeException("No user found with mobile number: " + mobileNumber);
-        user.get().setUserName(name);
-        userRepository.save(user.get());
-        return "Username Updated Successfully!!";
-    }
 
     @Transactional
     public String updatePassword(String mobileNumber, String oldPassword, String newPassword) {

@@ -11,8 +11,8 @@ import java.util.Date;
 @Component
 public class JWTUtility {
 
-    private final String SECRET = "AKBCHITFUNDFORTRIPANDSAVINGSTARTINGWITHSEPTEMBER2025";
-    private final long EXPIRATION = 1000 * 60  * 60 * 24; // 24 hours in milliseconds
+    private static final String SECRET = "AKB_CHIT_FUND_FOR_TRIP_AND_SAVINGS_APP";
+    private static final long EXPIRATION = 1000 * 60  * 60 * 24; // 24 hours in milliseconds
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());

@@ -51,13 +51,7 @@ private static final Logger LOG = LoggerFactory.getLogger(AdminController.class)
         return ResponseEntity.ok(jwtUtil.generateToken(u.getMobileNumber(), u.getRole().name()));
     }
 
-    @Data
-    static class RegisterRequest {
-        private String mobileNumber;
-        private String password;
-        private boolean admin;
-    }
-
+    
     @Data
     static class LoginRequest {
         private String mobile;
