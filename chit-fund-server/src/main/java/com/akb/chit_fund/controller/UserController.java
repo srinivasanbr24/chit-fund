@@ -23,11 +23,6 @@ public class UserController {
         return userService.getUserSchemas(mobileNumber);
     }
 
-    @PostMapping("/addUsername/{mobileNumber}")
-    public String addUserName(@PathVariable String mobileNumber, @RequestParam String userName) {
-        return userService.addUserName(mobileNumber, userName);
-    }
-
     @PatchMapping("/updatePassword/{mobileNumber}")
     public String updatePassword(@PathVariable String mobileNumber, @RequestParam String oldPassword, @RequestParam String newPassword) {
         return userService.updatePassword(mobileNumber, oldPassword, newPassword);
