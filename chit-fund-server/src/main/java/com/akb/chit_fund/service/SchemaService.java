@@ -7,6 +7,8 @@ import com.akb.chit_fund.model.User;
 import com.akb.chit_fund.repository.SchemaRepository;
 import com.akb.chit_fund.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public class SchemaService {
     private final UserRepository userRepo;
     private final UserService userService;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaService.class);
+
     public SchemaService(SchemaRepository schemaRepo, UserRepository userRepo, UserService userService) {
         this.schemaRepo = schemaRepo;
         this.userRepo = userRepo;
@@ -26,35 +30,41 @@ public class SchemaService {
 
     @Transactional
     public SchemaDTO createSchema(SchemaDTO schema) {
+        LOG.info("Creating schema with name: {}",schema.getSchemaName());
         Schema schema1 = new Schema();
         schema1.setDescription(schema.getDescription());
         schema1.setName(schema.getSchemaName());
         schema1.setDurationInMonths(schema.getDurationInMonths());
         schema1.setMonthlyContribution(schema.getMonthlyContribution());
         schemaRepo.save(schema1);
-        System.out.println(" schema is added");
+        LOG.info("Schema created successfully with id: {}",schema1.getId());
         return schema;
     }
 
-    // Need to check the existance of the user in the schema,
-    // if not only we need to add or else need to create the new user with role as user.
+
     @Transactional
     public SchemaDTO addUserToSchema(Long id, String mobileNumber, String userName) {
-        Schema schema = schemaRepo.findById(id).orElseThrow(()-> new RuntimeException("No Such Schema Found"));
+        LOG.info("Adding user with mobile: {} to schemaId: {}",mobileNumber,id);
+        if(userName == null || userName.isBlank()){
+            throw new RuntimeException("User name cannot be empty");
+        }
+        Schema schema = schemaRepo.findById(id).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
         User user = null;
 
-      if(userRepo.findById(mobileNumber).isPresent()){
-          user = userRepo.findById(mobileNumber).get();
-      } else {
-          user = userService.registerUser(mobileNumber,null, userName, Role.USER);
-      }
+        if (userRepo.findById(mobileNumber).isPresent()) {
+            user = userRepo.findById(mobileNumber).get();
+        } else {
+            user = userService.registerUser(mobileNumber, null, userName, Role.USER);
+        }
 
-     if(isUserAssociatedWithSchema(schema,mobileNumber)) throw new RuntimeException(" User already present in the Schema");
+        if (isUserAssociatedWithSchema(schema, mobileNumber))
+            throw new RuntimeException(" User already present in the Schema");
 
         schema.getUsers().add(user);
         user.getSchemas().add(schema);
         userRepo.save(user);
         schemaRepo.save(schema);
+        LOG.info("User with Mobile number :{} added to schemaId: {} successfully",mobileNumber,id);
         return createDTO(schema);
     }
 
@@ -69,6 +79,7 @@ public class SchemaService {
     }
 
     public List<Schema> getAllSchemas() {
+        LOG.info("Retrieve all Schemas");
         return schemaRepo.findAll();
     }
 

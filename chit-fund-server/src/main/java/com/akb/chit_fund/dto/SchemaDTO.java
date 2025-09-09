@@ -2,6 +2,7 @@ package com.akb.chit_fund.dto;
 
 import com.akb.chit_fund.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

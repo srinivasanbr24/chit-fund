@@ -4,8 +4,10 @@ import com.akb.chit_fund.dto.SchemaDTO;
 import com.akb.chit_fund.model.Role;
 import com.akb.chit_fund.model.User;
 import com.akb.chit_fund.repository.UserRepository;
+import com.akb.chit_fund.utility.Utility;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,17 +23,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
 
-    private UserRepository  userRepository;
+    private final UserRepository  userRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
-    private  static final String TEMP_PASSWORD = "akbchitfund";
+    private static final String TEMP_PASSWORD = "akbchitfund";
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
     public User registerUser(String mobileNumber, String password, String userName, Role role) {
-        validateMobileNumber(mobileNumber);
-
+        LOG.info("Registering {} with mobile: {}",role, mobileNumber);
+        if(!Utility.isValidMobileNumber(mobileNumber)){
+            throw new IllegalArgumentException("Invalid mobile number");
+        }
         if(userRepository.existsByMobileNumber(mobileNumber)){
             throw new IllegalArgumentException("Mobile number already registered");
         }
@@ -40,12 +44,14 @@ public class UserService {
         u.setPassword(encoder.encode(Objects.requireNonNullElse(password, TEMP_PASSWORD)));
         u.setUserName(userName);
         u.setRole(role);
+        LOG.info("{} registered successfully with mobile: {}",role, mobileNumber);
        return userRepository.save(u);
     }
 
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getUserSchemas(String mobileNumber) {
+        LOG.info("Fetching schemas for user with Mobile: {}",mobileNumber);
         Optional<User> user = userRepository.findById(mobileNumber);
         if(user.isEmpty())
         {
@@ -56,28 +62,22 @@ public class UserService {
         Set<SchemaDTO> schemaDTOs = user.get().getSchemas().stream()
                 .map(schema -> new SchemaDTO(schema.getId(), schema.getName(),schema.getDescription(),schema.getDurationInMonths(),schema.getMonthlyContribution()))
                 .collect(Collectors.toSet());
-
+        LOG.debug("Retrieved schemas for user :{}",schemaDTOs);
         return ResponseEntity.ok(schemaDTOs);
     }
 
 
     @Transactional
     public String updatePassword(String mobileNumber, String oldPassword, String newPassword) {
-        validateMobileNumber(mobileNumber);
+        LOG.info(" Updating password for user with mobile: {}",mobileNumber);
         Optional<User> user = userRepository.findById(mobileNumber);
         if(user.isEmpty()) throw  new RuntimeException("No user found with mobile number: " + mobileNumber);
         if(encoder.matches(oldPassword,TEMP_PASSWORD)) {
             user.get().setPassword(encoder.encode(newPassword));
             userRepository.save(user.get());
         } else throw new RuntimeException("Please enter the old password correctly!!");
+        LOG.info("Password updated successfully for user with mobile: {}",mobileNumber);
         return "Password Updated Successfully !!!";
     }
 
-    //private void
-
-    private void validateMobileNumber(String mobileNumber) {
-        if (mobileNumber == null || !mobileNumber.matches("\\d{10}")) {
-            throw new IllegalArgumentException("Invalid mobile number");
-        }
-    }
 }
