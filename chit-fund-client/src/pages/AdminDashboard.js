@@ -11,7 +11,7 @@ const AdminDashboard = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showCreateSchemaModal, setShowCreateSchemaModal] = useState(false);
-  const [schemaId, setSchemaId] = useState(1);
+  const [schemaId, setSchemaId] = useState(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [addUserSchemaId, setAddUserSchemaId] = useState(null);
 
@@ -68,12 +68,12 @@ const AdminDashboard = () => {
     setAddUserSchemaId(schemaId);
     setShowAddUserModal(true); // Open the Add User modal
     console.log(`Adding a new user to schema ID: ${schemaId}`);
-    // alert(`Adding a new user to schema ID: ${schemaId}`);
   };
 
   const handleCloseUserModal = () => {
     setShowUserModal(false); // Close the modal
     setSelectedUsers([]); // Clear the selected users
+    setSchemaId(null);
   };
 
   const handleAddUserSubmit = async (userData) => {
@@ -91,6 +91,36 @@ const AdminDashboard = () => {
     setShowAddUserModal(false);
     setAddUserSchemaId(null);
   };
+
+  const handleRemoveSchema = async (schemaId) => {
+    window.confirm("Are you sure you want to remove this schema?");
+    try {
+      await api.delete(`admin/schemas/${schemaId}/delete`);
+      fetchSchemas(); 
+    } catch (err) {
+      console.error("Failed to remove schema:", err);
+      alert("Error removing schema. Please try again.");
+    }
+  };
+
+  const handleRemoveUser = async (mobileNumber) => {
+    if (window.confirm("Are you sure you want to remove this user from the schema?")) {
+      try {
+        await api.delete(`admin/schemas/${schemaId}/removeUser/${mobileNumber}`);
+        await fetchSchemas(); 
+        const updatedSchemas = await api.get("admin/schemas");
+        const updatedSchema = updatedSchemas.data.find(s => s.id === schemaId);
+        if (updatedSchema) {
+          setSelectedUsers(updatedSchema.users);
+        }
+
+      } catch (err) {
+        console.error("Failed to remove user:", err);
+        alert("Error removing user. Please try again.");
+      }
+    }
+  };
+  
 
   return (
     <div className="admin-dashboard-container">
@@ -125,8 +155,7 @@ const AdminDashboard = () => {
                 <td>{s.monthlyContribution}</td>
                 <td><button onClick={() => handleSeeUsers(s.users,s.id)}>View & Add Users ({s.users.length})</button></td>
                 <td>
-                  {/* <button onClick={() => handleSeeUsers(s.users,s.id)}>See Users</button> */}
-                  <button onClick={() => handleAddUser(s.id)}>Remove User</button>
+                  <button onClick={() => handleRemoveSchema(s.id)}>Remove Schema</button>
                 </td>
               </tr>
             ))}
@@ -136,7 +165,12 @@ const AdminDashboard = () => {
         <p> No Schema Found.</p>
       )}
       {showUserModal && (
-        <UserModal users={selectedUsers} onClose={handleCloseUserModal} handleAddUser={handleAddUser} schemaId={schemaId}/>
+        <UserModal 
+          users={selectedUsers} 
+          onClose={handleCloseUserModal} 
+          handleAddUser={handleAddUser} 
+          schemaId={schemaId}
+          handleRemoveUser={handleRemoveUser}/>
       )}  
 
       {showCreateSchemaModal && (
