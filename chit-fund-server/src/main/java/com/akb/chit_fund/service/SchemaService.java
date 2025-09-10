@@ -7,6 +7,8 @@ import com.akb.chit_fund.model.User;
 import com.akb.chit_fund.repository.SchemaRepository;
 import com.akb.chit_fund.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -78,6 +80,34 @@ public class SchemaService {
         return schemaDTO;
     }
 
+    public String removeSchema(@NotNull Long schemaId) {
+        LOG.info("Removing schema with id: {}",schemaId);
+        Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
+        for (User user : schema.getUsers()) {
+            user.getSchemas().remove(schema);
+            userRepo.save(user);
+        }
+        schemaRepo.delete(schema);
+        LOG.info("Schema with id: {} removed successfully",schemaId);
+        return "Schema removed Successfully";
+    }
+
+    public String removeUserFromSchema(@NotNull Long schemaId, @NotBlank String mobileNumber) {
+        LOG.info("Removing user with mobile: {} from schemaId: {}",mobileNumber,schemaId);
+        Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
+        User user = userRepo.findById(mobileNumber).orElseThrow(() -> new RuntimeException("No Such User Found"));
+
+        if (!isUserAssociatedWithSchema(schema, mobileNumber))
+            throw new RuntimeException(" User not associated with the Schema");
+
+        schema.getUsers().remove(user);
+        user.getSchemas().remove(schema);
+        userRepo.save(user);
+        schemaRepo.save(schema);
+        LOG.info("User with Mobile number :{} removed from schemaId: {} successfully",mobileNumber,schemaId);
+        return "User removed from Schema Successfully";
+    }
+
     public List<Schema> getAllSchemas() {
         LOG.info("Retrieve all Schemas");
         return schemaRepo.findAll();
@@ -87,5 +117,5 @@ public class SchemaService {
         return schema.getUsers().stream()
                 .anyMatch(user -> user.getMobileNumber().equals(mobileNumber));
     }
-
+    
 }
