@@ -45,7 +45,7 @@ public class SchemaService {
 
 
     @Transactional
-    public SchemaDTO addUserToSchema(Long id, String mobileNumber, String userName) {
+    public SchemaDTO addUserToSchema(long id, String mobileNumber, String userName) {
         LOG.info("Adding user with mobile: {} to schemaId: {}",mobileNumber,id);
         if(userName == null || userName.isBlank()){
             throw new RuntimeException("User name cannot be empty");
@@ -80,7 +80,7 @@ public class SchemaService {
         return schemaDTO;
     }
 
-    public String removeSchema(@NotNull Long schemaId) {
+    public String removeSchema(@NotNull long schemaId) {
         LOG.info("Removing schema with id: {}",schemaId);
         Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
         for (User user : schema.getUsers()) {
@@ -92,7 +92,7 @@ public class SchemaService {
         return "Schema removed Successfully";
     }
 
-    public String removeUserFromSchema(@NotNull Long schemaId, @NotBlank String mobileNumber) {
+    public String removeUserFromSchema(@NotNull long schemaId, @NotBlank String mobileNumber) {
         LOG.info("Removing user with mobile: {} from schemaId: {}",mobileNumber,schemaId);
         Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
         User user = userRepo.findById(mobileNumber).orElseThrow(() -> new RuntimeException("No Such User Found"));

@@ -31,28 +31,15 @@ public class SchemaController {
 
     @PostMapping("/create")
     @JsonView(Views.Basic.class)
-    public SchemaDTO createSchema(@RequestBody SchemaDTO schema) {
+    public SchemaDTO createSchema( @Validated @RequestBody SchemaDTO schema) {
         LOG.debug("Received create schema request for schema: {}", schema.getSchemaName());
-        if(schema.getSchemaName() == null || schema.getSchemaName().isBlank()){
-            throw new RuntimeException("Schema name cannot be empty");
-        }
-        if(schema.getDescription() == null || schema.getDescription().isBlank()){
-            throw new RuntimeException("Schema description cannot be empty");
-        }
-        if(schema.getDurationInMonths() == null || schema.getDurationInMonths() <=0) {
-            throw new RuntimeException(" Duration should be greater than 1 Month.");
-        }
-        if(schema.getMonthlyContribution() == null || schema.getMonthlyContribution() <=0){
-            throw new RuntimeException(" Monthly Contribution should be greater than 0.");
-        }
-        LOG.info("Schema created Successfully with name: {}",schema.getSchemaName());
-       return schemaService.createSchema(schema);
+        return schemaService.createSchema(schema);
 
     }
 
     @PostMapping("/{schemaId}/addUser")
     @JsonView(Views.Detailed.class)
-    public SchemaDTO addUserToSchema(@RequestBody @Valid AddUserRequest request, @PathVariable  @NotNull Long schemaId) {
+    public SchemaDTO addUserToSchema(@Validated @RequestBody AddUserRequest request, @PathVariable  @NotNull long schemaId) {
         if(!Utility.isValidMobileNumber(request.getMobileNumber())){
             throw new RuntimeException("Invalid mobile number");
         }
@@ -66,13 +53,13 @@ public class SchemaController {
     }
 
     @DeleteMapping("/{schemaId}/delete")
-    public String deleteSchema(@PathVariable @NotNull Long schemaId){
+    public String deleteSchema(@PathVariable @NotNull long schemaId){
         LOG.info("Received delete schema request for schemaId: {}",schemaId);
         return schemaService.removeSchema(schemaId);
     }
 
     @DeleteMapping("/{schemaId}/removeUser/{mobileNumber}")
-    public String removeUserFromSchema(@PathVariable @NotNull Long schemaId, @PathVariable @NotBlank String mobileNumber){
+    public String removeUserFromSchema(@PathVariable @NotNull long schemaId, @PathVariable @NotBlank String mobileNumber){
         if(!Utility.isValidMobileNumber(mobileNumber)){
             throw new RuntimeException("Invalid mobile number");
         }
