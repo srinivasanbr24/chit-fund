@@ -6,7 +6,7 @@ const CreateSchemaModal = ({ onCreateSchema, onClose }) => {
     schemaName: '',
     description: '',
     durationInMonths: '',
-    amount: ''
+    monthlyContribution: ''
   });
 
   const handleChange = (e) => {
@@ -57,6 +57,7 @@ const CreateSchemaModal = ({ onCreateSchema, onClose }) => {
               <label htmlFor="durationInMonths">Duration (Months)</label>
               <input
                 type="number"
+                step="1"
                 id="durationInMonths"
                 name="durationInMonths"
                 value={formData.durationInMonths}
@@ -65,13 +66,13 @@ const CreateSchemaModal = ({ onCreateSchema, onClose }) => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="amount">Monthly Contribution</label>
+              <label htmlFor="monthlyContribution">Monthly Contribution</label>
               <input
                 type="number"
-                step="0.01"
-                id="amount"
-                name="amount"
-                value={formData.amount}
+                step="100"
+                id="monthlyContribution"
+                name="monthlyContribution"
+                value={formData.monthlyContribution}
                 onChange={handleChange}
                 required
               />
