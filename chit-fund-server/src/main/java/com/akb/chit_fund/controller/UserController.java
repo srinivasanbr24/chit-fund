@@ -5,6 +5,7 @@ import com.akb.chit_fund.utility.Utility;
 import com.akb.chit_fund.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class UserController {
         if(!Utility.isValidMobileNumber(mobileNumber)) {
             throw new RuntimeException("Invalid mobile number");
         }
-        if(oldPassword == null || oldPassword.isBlank() || newPassword == null || newPassword.isBlank()){
+        if(StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)) {
             throw new RuntimeException("Passwords cannot be empty");
         }
         return userService.updatePassword(mobileNumber, oldPassword, newPassword);
