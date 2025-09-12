@@ -34,35 +34,46 @@ private static final Logger LOG = LoggerFactory.getLogger(AdminController.class)
 
     @PostMapping("/registerAdmin")
     public ResponseEntity<String> registerAdmin(@RequestBody @Valid RegisterRequest request) {
-        LOG.debug("Register admin request for mobile: {}", request.getMobile());
-        String mobileNumber = request.getMobile();
-
-        if(!Utility.isValidMobileNumber(mobileNumber)) {
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            LOG.debug("Register admin request for mobile: {}", request.getMobile());
+            String mobileNumber = request.getMobile();
+            if (!Utility.isValidMobileNumber(mobileNumber)) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            if (userRepo.findById(mobileNumber).isPresent()) {
+                throw new RuntimeException("Admin with this mobile number already exists");
+            }
+            User user = userService.registerUser(mobileNumber, request.getPassword(), request.getUserName(), Role.ADMIN);
+            LOG.info("Admin registered successfully with mobile: {}", user.getMobileNumber());
+            return ResponseEntity.ok("Admin registered successfully");
+        } catch (Exception e) {
+            LOG.error("Error registering admin: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        if(userRepo.findById(mobileNumber).isPresent()) {
-            throw new RuntimeException("Admin with this mobile number already exists");
-        }
-        User user = userService.registerUser(mobileNumber, request.getPassword(), request.getUserName(), Role.ADMIN);
-        LOG.info("Admin registered successfully with mobile: {}", user.getMobileNumber());
-        return ResponseEntity.ok("Admin registered successfully");
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request) {
-        LOG.info("Received login request for mobile: {}", request.getMobile());
-        String mobile = request.getMobile();
-        String password = request.getPassword();
-        if(!Utility.isValidMobileNumber(mobile)) {
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            LOG.info("Received login request for mobile: {}", request.getMobile());
+            String mobile = request.getMobile();
+            String password = request.getPassword();
+            if (!Utility.isValidMobileNumber(mobile)) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            User u = userRepo.findById(mobile).orElseThrow(() -> new RuntimeException("User Not found"));
+            if (!encoder.matches(password, u.getPassword())) {
+                throw new RuntimeException("Invalid credentials");
+            }
+            LOG.info("User logged in successfully with mobile: {}", u.getMobileNumber());
+            return ResponseEntity.ok(jwtUtil.generateToken(u.getMobileNumber(), u.getRole().name()));
+        } catch (Exception e) {
+            LOG.error("Error during login: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        User u = userRepo.findById(mobile).orElseThrow(() -> new RuntimeException("User Not found"));
-        if (!encoder.matches(password, u.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
-        }
-        LOG.info("User logged in successfully with mobile: {}", u.getMobileNumber());
-        return ResponseEntity.ok(jwtUtil.generateToken(u.getMobileNumber(), u.getRole().name()));
     }
+
 
     @Data
     static class RegisterRequest {
@@ -77,6 +88,7 @@ private static final Logger LOG = LoggerFactory.getLogger(AdminController.class)
         @Size(min = 5, message = "User name should have at least 3 characters")
         private String userName;
     }
+
 
     @Data
     static class LoginRequest {

@@ -24,22 +24,33 @@ public class UserController {
     @GetMapping("/schemas/{mobileNumber}")
     @JsonView(Views.Detailed.class)
     public ResponseEntity<?> getUserSchemas(@PathVariable String mobileNumber) {
-        LOG.info("Retrieve schemas for user :{}",mobileNumber);
-        if(!Utility.isValidMobileNumber(mobileNumber)) {
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            LOG.info("Retrieve schemas for user :{}", mobileNumber);
+            if (!Utility.isValidMobileNumber(mobileNumber)) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            return userService.getUserSchemas(mobileNumber);
+        } catch (Exception e) {
+            LOG.error("Error retrieving user schemas: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        return userService.getUserSchemas(mobileNumber);
     }
+
 
     @PatchMapping("/updatePassword/{mobileNumber}")
     public String updatePassword(@PathVariable String mobileNumber, @RequestParam String oldPassword, @RequestParam String newPassword) {
-        LOG.debug("Update password request received for user: {}",mobileNumber);
-        if(!Utility.isValidMobileNumber(mobileNumber)) {
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            LOG.debug("Update password request received for user: {}", mobileNumber);
+            if (!Utility.isValidMobileNumber(mobileNumber)) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)) {
+                throw new RuntimeException("Passwords cannot be empty");
+            }
+            return userService.updatePassword(mobileNumber, oldPassword, newPassword);
+        } catch (Exception e) {
+            LOG.error("Error updating password for user {}: {}", mobileNumber, e.getMessage());
+            throw new RuntimeException(e);
         }
-        if(StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)) {
-            throw new RuntimeException("Passwords cannot be empty");
-        }
-        return userService.updatePassword(mobileNumber, oldPassword, newPassword);
     }
 }

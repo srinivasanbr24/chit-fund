@@ -6,12 +6,10 @@ import com.akb.chit_fund.service.SchemaService;
 import com.akb.chit_fund.utility.Utility;
 import com.akb.chit_fund.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -32,39 +30,68 @@ public class SchemaController {
     @PostMapping("/create")
     @JsonView(Views.Basic.class)
     public SchemaDTO createSchema( @Validated @RequestBody SchemaDTO schema) {
-        LOG.debug("Received create schema request for schema: {}", schema.getSchemaName());
-        return schemaService.createSchema(schema);
-
+        try{
+            LOG.debug("Received create schema request for schema: {}", schema.getSchemaName());
+            return schemaService.createSchema(schema);
+        } catch (Exception e){
+            LOG.error("Error creating schema: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
+
 
     @PostMapping("/{schemaId}/addUser")
     @JsonView(Views.Detailed.class)
     public SchemaDTO addUserToSchema(@Validated @RequestBody AddUserRequest request, @PathVariable  @NotNull long schemaId) {
-        if(!Utility.isValidMobileNumber(request.getMobileNumber())){
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            if (!Utility.isValidMobileNumber(request.getMobileNumber())) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            LOG.info("Received add user request to add to schemaId:{}, for user:{}", schemaId, request.mobileNumber);
+            return schemaService.addUserToSchema(schemaId, request.getMobileNumber(), request.getUserName());
+        } catch (Exception e) {
+            LOG.error("Error adding user to schema: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        LOG.info("Received add user request to add to schemaId:{}, for user:{}",schemaId,request.mobileNumber);
-        return schemaService.addUserToSchema(schemaId, request.getMobileNumber(), request.getUserName());
     }
+
 
     @GetMapping
     public List<Schema> getAllSchemas(){
-        return schemaService.getAllSchemas();
+        try{
+            LOG.debug("Received request to fetch all schemas");
+            return schemaService.getAllSchemas();
+        } catch (Exception e){
+            LOG.error("Error fetching schemas: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
+
 
     @DeleteMapping("/{schemaId}/delete")
     public String deleteSchema(@PathVariable @NotNull long schemaId){
-        LOG.info("Received delete schema request for schemaId: {}",schemaId);
-        return schemaService.removeSchema(schemaId);
+        try {
+            LOG.info("Received delete schema request for schemaId: {}", schemaId);
+            return schemaService.removeSchema(schemaId);
+        } catch (Exception e) {
+            LOG.error("Error deleting schema: {} ", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
+
 
     @DeleteMapping("/{schemaId}/removeUser/{mobileNumber}")
     public String removeUserFromSchema(@PathVariable @NotNull long schemaId, @PathVariable @NotBlank String mobileNumber){
-        if(!Utility.isValidMobileNumber(mobileNumber)){
-            throw new RuntimeException("Invalid mobile number");
+        try {
+            if (!Utility.isValidMobileNumber(mobileNumber)) {
+                throw new RuntimeException("Invalid mobile number");
+            }
+            LOG.info("Received remove user request to remove from schemaId:{}, for user:{}", schemaId, mobileNumber);
+            return schemaService.removeUserFromSchema(schemaId, mobileNumber);
+        } catch (Exception e) {
+            LOG.error("Error removing user from schema: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        LOG.info("Received remove user request to remove from schemaId:{}, for user:{}",schemaId,mobileNumber);
-        return schemaService.removeUserFromSchema(schemaId, mobileNumber);
     }
 
 
