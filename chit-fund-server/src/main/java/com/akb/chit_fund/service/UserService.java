@@ -76,16 +76,18 @@ public class UserService {
 
 
     @Transactional
-    public String updatePassword(String mobileNumber, String oldPassword, String newPassword) {
+    public boolean updatePassword(String mobileNumber, String oldPassword, String newPassword) {
         try {
             LOG.info(" Updating password for user with mobile: {}", mobileNumber);
             User user = userRepository.findById(mobileNumber).orElseThrow(() -> new RuntimeException("No user found with mobile number: " + mobileNumber));
             if (encoder.matches(oldPassword, TEMP_PASSWORD)) {
                 user.setPassword(encoder.encode(newPassword));
                 userRepository.save(user);
-            } else throw new RuntimeException("Please enter the old password correctly!!");
-            LOG.info("Password updated successfully for user with mobile: {}", mobileNumber);
-            return "Password Updated Successfully !!!";
+                LOG.info("Password updated successfully for user with mobile: {}", mobileNumber);
+                return true;
+            } else {
+                throw new RuntimeException("Please enter the old password correctly!!");
+            }
         } catch (Exception e) {
             LOG.error("Error while updating password: {}", e.getMessage());
             throw new RuntimeException(e);

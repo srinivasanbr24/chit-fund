@@ -38,7 +38,7 @@ public class UserController {
 
 
     @PatchMapping("/updatePassword/{mobileNumber}")
-    public String updatePassword(@PathVariable String mobileNumber, @RequestParam String oldPassword, @RequestParam String newPassword) {
+    public boolean updatePassword(@PathVariable String mobileNumber, @RequestParam String oldPassword, @RequestParam String newPassword) {
         try {
             LOG.debug("Update password request received for user: {}", mobileNumber);
             if (!Utility.isValidMobileNumber(mobileNumber)) {
