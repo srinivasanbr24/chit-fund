@@ -1,20 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import api from "../api/axios";
-import { useLocation } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const UserDashboard = () => {
   const [schemas, setSchemas] = useState([]);
-  const {mobile} = useLocation().state;
-  console.log(" Mobile Number is "+mobile);
+  const [loading, setLoading] = useState(true);
+  const { auth } = useContext(AuthContext);
 
   useEffect(() => {
-    fetchUserSchemas();
-  }, []);
+    if(auth && auth.user && auth.user.sub) {
+      console.log("Fetching schemas for mobile:", auth.user.sub);
+      fetchUserSchemas(auth.user.sub);
+    } else {
+      console.error("User information is missing in auth context.");
+      setLoading(false);
+    }
+  }, [auth]);
 
-  const fetchUserSchemas = async () => {
-    const res = await api.get(`/user/schemas/${mobile}`);
-    setSchemas(res.data);
+  const fetchUserSchemas = async (mobile) => {
+    try{
+      const res = await api.get(`/user/schemas/${mobile}`);
+      setSchemas(res.data);
+    } catch(err) {
+      console.error("Failed to fetch user schemas:", err);
+      setSchemas([]);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if(loading) {
+    return <p>Loading your Plans.....</p>;
+  }
+
+  if(!auth){
+    return <p>Please login to view your Dashboard.</p>;
+  }
+  
+
 
   return (
     <div style={{ padding: "2rem" }}>

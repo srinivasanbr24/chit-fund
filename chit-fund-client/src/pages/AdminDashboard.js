@@ -79,7 +79,18 @@ const AdminDashboard = () => {
   const handleAddUserSubmit = async (userData) => {
     try {
       await api.post(`admin/schemas/${addUserSchemaId}/addUser`, userData);
-      handleCloseAddUserModal(); 
+      handleCloseAddUserModal();
+
+      const res = (await api.get("admin/schemas"));
+      const updatedSchemas = res.data;
+      setSchemas(updatedSchemas);
+
+      const updatedSchema = updatedSchemas.find(s => s.id === addUserSchemaId);
+      if(updatedSchema) {
+        setSelectedUsers(updatedSchema.users);
+        setShowUserModal(true); // Reopen the UserModal to show updated users
+      }
+
       fetchSchemas(); 
     } catch (err) {
       console.error("Failed to add user:", err);
@@ -95,8 +106,13 @@ const AdminDashboard = () => {
   const handleRemoveSchema = async (schemaId) => {
     window.confirm("Are you sure you want to remove this schema?");
     try {
-      await api.delete(`admin/schemas/${schemaId}/delete`);
-      fetchSchemas(); 
+      const res = await api.delete(`admin/schemas/${schemaId}/delete`);
+      if(res.data === true){
+        alert("Schema removed successfully.");
+        fetchSchemas();
+      } else {
+        alert("Failed to remove schema. Please try again.");
+      }
     } catch (err) {
       console.error("Failed to remove schema:", err);
       alert("Error removing schema. Please try again.");
@@ -106,12 +122,17 @@ const AdminDashboard = () => {
   const handleRemoveUser = async (mobileNumber) => {
     if (window.confirm("Are you sure you want to remove this user from the schema?")) {
       try {
-        await api.delete(`admin/schemas/${schemaId}/removeUser/${mobileNumber}`);
-        await fetchSchemas(); 
-        const updatedSchemas = await api.get("admin/schemas");
-        const updatedSchema = updatedSchemas.data.find(s => s.id === schemaId);
-        if (updatedSchema) {
-          setSelectedUsers(updatedSchema.users);
+        const res = await api.delete(`admin/schemas/${schemaId}/removeUser/${mobileNumber}`);
+        if(res.data === true){
+          alert("User removed successfully.");
+          await fetchSchemas(); 
+          const updatedSchemas = await api.get("admin/schemas");
+          const updatedSchema = updatedSchemas.data.find(s => s.id === schemaId);
+          if (updatedSchema) {
+            setSelectedUsers(updatedSchema.users);
+          }
+        } else {
+          alert("Failed to remove user. Please try again.");
         }
 
       } catch (err) {
@@ -125,7 +146,6 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard-container">
       <h1>Admin Dashboard</h1>
-
       <button onClick={handleOpenCreateSchemaModal}>Create New Schema</button>
 
       <h3>Available Schemas</h3>
