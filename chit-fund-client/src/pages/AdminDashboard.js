@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import api from "../api/axios";
 import "../css/AdminDashboard.css";
 import UserModal from "../components/UserModal";
 import CreateSchemaModal from "../components/CreateSchemaModal";
 import AddUserModal from "../components/AddUserModal";
+import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
+  const { auth } = useContext(AuthContext);
   const [schemas, setSchemas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -145,7 +147,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard-container">
-      <h1>Admin Dashboard</h1>
+      <h1>Welcome, {auth.user.username || auth.user.sub}!</h1>
       <button onClick={handleOpenCreateSchemaModal}>Create New Schema</button>
 
       <h3>Available Schemas</h3>

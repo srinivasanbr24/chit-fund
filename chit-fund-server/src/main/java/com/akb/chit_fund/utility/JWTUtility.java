@@ -18,17 +18,18 @@ public class JWTUtility {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String mobileNumber, String role, String username) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(mobileNumber)
                 .claim("role", role)
+                .claim("username", username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractMobileNumber(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
@@ -47,7 +48,7 @@ public class JWTUtility {
     }
 
     public boolean validateToken(String token, String username) {
-        return username.equals(extractUsername(token)) && !isTokenExpired(token);
+        return username.equals(extractMobileNumber(token)) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

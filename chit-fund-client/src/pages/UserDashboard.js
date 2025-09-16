@@ -38,10 +38,9 @@ const UserDashboard = () => {
   }
   
 
-
   return (
     <div style={{ padding: "2rem" }}>
-      <h2>User Dashboard</h2>
+      <h2>Welcome, {auth.user.username || auth.user.mobileNumber}!</h2>
       <h3>My Schemas</h3>
       { schemas.length > 0 ? (
         <table className="schemas-table">

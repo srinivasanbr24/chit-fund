@@ -7,6 +7,6 @@ public class Utility {
     private static final String MOBILE_NUMBER_PATTERN = "^\\d{10}$";
 
     public static boolean isValidMobileNumber(String mobileNumber) {
-        return StringUtils.isBlank(mobileNumber) && mobileNumber.matches(MOBILE_NUMBER_PATTERN);
+        return !StringUtils.isBlank(mobileNumber) && mobileNumber.matches(MOBILE_NUMBER_PATTERN);
     }
 }

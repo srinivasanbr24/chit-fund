@@ -66,8 +66,8 @@ private static final Logger LOG = LoggerFactory.getLogger(AdminController.class)
             if (!encoder.matches(password, u.getPassword())) {
                 throw new RuntimeException("Invalid credentials");
             }
-            LOG.info("User logged in successfully with mobile: {}", u.getMobileNumber());
-            return ResponseEntity.ok(jwtUtil.generateToken(u.getMobileNumber(), u.getRole().name()));
+            LOG.info("{} logged in successfully with mobile: {}",u.getRole(), u.getMobileNumber());
+            return ResponseEntity.ok(jwtUtil.generateToken(u.getMobileNumber(), u.getRole().name(), u.getUserName()));
         } catch (Exception e) {
             LOG.error("Error during login: {}", e.getMessage());
             throw new RuntimeException(e);
