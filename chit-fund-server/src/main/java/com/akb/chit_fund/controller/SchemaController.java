@@ -69,7 +69,7 @@ public class SchemaController {
 
 
     @DeleteMapping("/{schemaId}/delete")
-    public String deleteSchema(@PathVariable @NotNull long schemaId){
+    public boolean deleteSchema(@PathVariable @NotNull long schemaId){
         try {
             LOG.info("Received delete schema request for schemaId: {}", schemaId);
             return schemaService.removeSchema(schemaId);
@@ -81,7 +81,7 @@ public class SchemaController {
 
 
     @DeleteMapping("/{schemaId}/removeUser/{mobileNumber}")
-    public String removeUserFromSchema(@PathVariable @NotNull long schemaId, @PathVariable @NotBlank String mobileNumber){
+    public boolean removeUserFromSchema(@PathVariable @NotNull long schemaId, @PathVariable @NotBlank String mobileNumber){
         try {
             if (!Utility.isValidMobileNumber(mobileNumber)) {
                 throw new RuntimeException("Invalid mobile number");

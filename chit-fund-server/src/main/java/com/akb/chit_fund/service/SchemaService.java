@@ -78,7 +78,7 @@ public class SchemaService {
     }
 
 
-    public String removeSchema(@NotNull long schemaId) {
+    public boolean removeSchema(@NotNull long schemaId) {
         try {
             LOG.info("Removing schema with id: {}", schemaId);
             Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
@@ -88,7 +88,7 @@ public class SchemaService {
             }
             schemaRepo.delete(schema);
             LOG.info("Schema with id: {} removed successfully", schemaId);
-            return "Schema removed Successfully";
+            return true;
         } catch (Exception e) {
             LOG.error("Error while removing schema: {}", e.getMessage());
             throw new RuntimeException(e);
@@ -96,7 +96,7 @@ public class SchemaService {
     }
 
 
-    public String removeUserFromSchema(@NotNull long schemaId, @NotBlank String mobileNumber) {
+    public boolean removeUserFromSchema(@NotNull long schemaId, @NotBlank String mobileNumber) {
         try {
             LOG.info("Removing user with mobile: {} from schemaId: {}", mobileNumber, schemaId);
             Schema schema = schemaRepo.findById(schemaId).orElseThrow(() -> new RuntimeException("No Such Schema Found"));
@@ -110,7 +110,7 @@ public class SchemaService {
             userRepo.save(user);
             schemaRepo.save(schema);
             LOG.info("User with Mobile number :{} removed from schemaId: {} successfully", mobileNumber, schemaId);
-            return "User removed from Schema Successfully";
+            return true;
         } catch (Exception e) {
             LOG.error("Error while removing user from schema: {}", e.getMessage());
             throw new RuntimeException(e);
