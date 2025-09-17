@@ -7,7 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import ProfileIcon from "./components/ProfileIcon";
 function App() {
   return (
 
@@ -35,7 +35,12 @@ function AppContent() {
         boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
       }}>
         <h1 style={{margin: "0"}}>AKB Chit Fund </h1>
-        {auth && <LogoutButton />}
+        {auth && 
+        (<div style={{ display: 'flex', alignItems: 'center' }}>
+            <ProfileIcon />
+            <LogoutButton />
+          </div>)
+        }
       </header>
       <main>
         <Routes> 
