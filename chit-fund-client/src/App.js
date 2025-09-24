@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { useContext } from "react";
 import LogoutButton from "./components/LogoutButton";
 import { AuthProvider } from "./context/AuthContext";
@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProfileIcon from "./components/ProfileIcon";
+import ProfilePage from "./pages/ProfilePage";
 function App() {
   return (
 
@@ -37,7 +38,9 @@ function AppContent() {
         <h1 style={{margin: "0"}}>AKB Chit Fund </h1>
         {auth && 
         (<div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link to= "/profile">
             <ProfileIcon />
+          </Link>
             <LogoutButton />
           </div>)
         }
@@ -53,6 +56,11 @@ function AppContent() {
           <Route path="/user" element={
             <ProtectedRoute allowedRoles={["USER"]}>
               <UserDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute allowedRoles={["ADMIN", "USER"]}>
+              <ProfilePage />
             </ProtectedRoute>
           } />
         </Routes>
