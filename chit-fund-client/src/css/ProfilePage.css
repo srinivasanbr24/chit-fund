@@ -1,0 +1,81 @@
+.profile-container {
+  display: flex;
+  justify-content: center;
+}
+
+.profile-card {
+  padding: 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.profile-card h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  margin-bottom: 20px;
+}
+
+.user-info p {
+  font-size: 1.1rem;
+  margin: 5px 0;
+}
+
+.user-info strong {
+  margin-right: 10px;
+}
+
+.password-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.password-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.password-form button:hover {
+  background-color: #0056b3;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
