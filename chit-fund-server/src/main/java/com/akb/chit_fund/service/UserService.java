@@ -80,7 +80,7 @@ public class UserService {
         try {
             LOG.info(" Updating password for user with mobile: {}", mobileNumber);
             User user = userRepository.findById(mobileNumber).orElseThrow(() -> new RuntimeException("No user found with mobile number: " + mobileNumber));
-            if (encoder.matches(oldPassword, TEMP_PASSWORD)) {
+            if (encoder.matches(oldPassword, user.getPassword())) {
                 user.setPassword(encoder.encode(newPassword));
                 userRepository.save(user);
                 LOG.info("Password updated successfully for user with mobile: {}", mobileNumber);

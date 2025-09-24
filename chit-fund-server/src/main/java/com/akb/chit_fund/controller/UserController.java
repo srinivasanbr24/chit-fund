@@ -4,7 +4,11 @@ import com.akb.chit_fund.service.UserService;
 import com.akb.chit_fund.utility.Utility;
 import com.akb.chit_fund.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +42,29 @@ public class UserController {
 
 
     @PatchMapping("/updatePassword/{mobileNumber}")
-    public boolean updatePassword(@PathVariable String mobileNumber, @RequestParam String oldPassword, @RequestParam String newPassword) {
+    public boolean updatePassword(@PathVariable String mobileNumber, @RequestBody @Valid UpdateRequest request) {
         try {
             LOG.debug("Update password request received for user: {}", mobileNumber);
             if (!Utility.isValidMobileNumber(mobileNumber)) {
                 throw new RuntimeException("Invalid mobile number");
             }
-            if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)) {
+            if (StringUtils.isBlank(request.getOldPassword()) || StringUtils.isBlank(request.getNewPassword())) {
                 throw new RuntimeException("Passwords cannot be empty");
             }
-            return userService.updatePassword(mobileNumber, oldPassword, newPassword);
+            return userService.updatePassword(mobileNumber, request.getOldPassword(), request.getNewPassword());
         } catch (Exception e) {
             LOG.error("Error updating password for user {}: {}", mobileNumber, e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    @Data
+    static class UpdateRequest{
+        @NotNull(message = "Password cannot be Empty")
+        @Size(min=8, message = "Old Password should have at least 8 characters")
+        private String oldPassword;
+        @NotNull(message = "Password cannot be Empty")
+        @Size(min=8, message = "New Password should have at least 8 characters")
+        private String newPassword;
     }
 }
