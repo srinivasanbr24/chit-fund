@@ -62,7 +62,7 @@ The Spring Boot server is configured to connect to a **MySQL** database.
 1.  **Navigate to Server:**
 
     ```bash
-    cd akb-chit-fund-app/server
+    cd /chit-fund-server
     ```
 
 2.  **Build the Project:**
@@ -87,7 +87,7 @@ The Spring Boot server is configured to connect to a **MySQL** database.
 
 1.  **Navigate to Client:**
     ```bash
-    cd akb-chit-fund-app/client
+    cd /chit-fund-client
     ```
 2.  **Install Dependencies:**
     ```bash
@@ -119,12 +119,12 @@ This method simplifies the setup by running the application within Docker contai
 1.  **Clone the Repository:**
     ```bash
     git clone [YOUR_REPO_URL]
-    cd akb-chit-fund-app
+    cd chit-fund
     ```
 2.  **Navigate to Server Folder:**
     The provided script assumes the server folder has the necessary `Dockerfile` and setup.
     ```bash
-    cd server
+    cd chit-fund-server
     ```
 3.  **Run the Setup Script:**
     This script is expected to build the Java application, create the Docker image, and launch the container (often linked to a separate local DB container).
