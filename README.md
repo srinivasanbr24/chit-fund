@@ -6,7 +6,7 @@ This application is a **Chit Fund Management System** designed to track user fin
 
 ## 💻 Technology Stack
 
-| Component | Technology | Description |
+| Component | Technology |
 | :--- | :--- | :--- |
 | **Frontend (Client)** | **React.js** |
 | **Backend (Server)** | **Java Spring Boot** | 
