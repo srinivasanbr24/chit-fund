@@ -1,4 +1,4 @@
-# AKB Chit Fund Application 💰
+#Chit Fund Application 💰
 
 This application is a **Chit Fund Management System** designed to track user financial plans and manage scheme enrollments.
 
