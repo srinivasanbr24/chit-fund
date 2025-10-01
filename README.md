@@ -118,7 +118,7 @@ This method simplifies the setup by running the application within Docker contai
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [YOUR_REPO_URL]
+    git clone https://github.com/srinivasanbr24/chit-fund.git
     cd chit-fund
     ```
 2.  **Navigate to Server Folder:**
