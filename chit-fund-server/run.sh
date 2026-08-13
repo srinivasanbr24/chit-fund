@@ -4,7 +4,7 @@ set -e
 # The script will exit immediately if any command exits with a non-zero status.
 
 CONTAINER_NAME="akb-chit-fund-app"
-DB_CONTAINER_NAME="mysql-akb-chit-fund"
+DB_CONTAINER_NAME="mysql-akb-app"
 APP_PORT="8082"
 PROFILE="local"
 
