@@ -1,0 +1,43 @@
+services:
+  # --- DATABASE SERVICE ---
+  db:
+    image: mysql:8.4
+    container_name: mysql-akb-app
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: akb_chit_fund
+      MYSQL_USER: akb
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- SPRING BOOT APPLICATION SERVICE ---
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: akb-chit-fund-app:latest
+    container_name: akb-chit-fund-app
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/akb_chit_fund
+      SPRING_DATASOURCE_USERNAME: akb
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+    driver: local
